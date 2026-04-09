@@ -569,13 +569,6 @@ const SHEET_CONFIG = {
   2: { id: '1dwYAAfo_C4w-ywolyxoGAkNrbWaO5or349H0miAuuLM', name: 'II BCA',    short: 'BCA-II', color: '#5c2d6b', gid: '0' }
 };
 
-const KNOWN_TOPICS = [
-  'Input & Output','Operators','Decision Making','Looping','Series',
-  'Pattern','Arrays 1D','Arrays 2D','Strings','Function',
-  'Recursion','Class & Objects','Encapsulation','Inheritance',
-  'Polymorphism','Abstraction','Interface / Exc. Handling'
-];
-
 const topicColors = [
   '#0a5c44','#0f6b7a','#5c2d6b','#b8860b','#9b2d1f',
   '#0a5c44','#0f6b7a','#5c2d6b','#b8860b','#9b2d1f',
@@ -585,16 +578,20 @@ const topicColors = [
 const dataCache = {};
 let currentDeptIdx = 0;
 
+/* ── FIX: No timestamp param — use cache-busting via headers instead ── */
 function buildCSVUrl(sheetId, gid) {
-  return 'https://docs.google.com/spreadsheets/d/' + sheetId + '/export?format=csv&gid=' + gid + '&t=' + Date.now();
+  return 'https://docs.google.com/spreadsheets/d/' + sheetId + '/export?format=csv&gid=' + gid;
 }
 
 async function fetchSheetData(deptIdx) {
   const cfg = SHEET_CONFIG[deptIdx];
   const url = buildCSVUrl(cfg.id, cfg.gid);
   try {
-    const resp = await fetch(url, { cache: 'no-store' });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status + ' — sheet may not be public');
+    const resp = await fetch(url, {
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache' }
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const csv = await resp.text();
     return parseCSV(csv, deptIdx);
   } catch (err) {
@@ -771,7 +768,7 @@ async function loadAndRenderDept(deptIdx, isInitial) {
       if (isInitial) { overlay.classList.add('hidden'); setTimeout(() => { overlay.style.display = 'none'; }, 500); }
       document.getElementById('errorMsg').textContent = err.message;
       errBanner.classList.add('show');
-      document.getElementById('last-updated-txt').textContent = 'Failed to load — using cached or empty data';
+      document.getElementById('last-updated-txt').textContent = 'Failed to load — check sheet permissions';
       return;
     }
   }
