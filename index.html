@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HackerRank Dashboard — Kamaraj College</title>
+<title>HackerRank Dashboard — KAMARAJ College</title>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 <style>
 html {
@@ -394,7 +394,7 @@ td { padding: 8px 10px; color: var(--ink); vertical-align: middle; line-height: 
 <header>
   <div class="hdr-left">
     <div class="hdr-text">
-      <div class="hdr-college">KAMARAJ COLLEGE</div>
+      <div class="hdr-college">KAMARAJ COLLEGE OF ENGINEERING &amp; TECHNOLOGY</div>
       <div class="hdr-bottom-row">
         <span class="hdr-hack">HackerRank Tracker</span>
       </div>
@@ -404,15 +404,15 @@ td { padding: 8px 10px; color: var(--ink); vertical-align: middle; line-height: 
     <div class="dept-dropdown-wrap">
       <div class="dept-btn" id="deptBtn" onclick="toggleDeptMenu()">
         <svg class="dept-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-        <span id="deptBtnLabel">I BCA - A</span>
+        <span id="deptBtnLabel">I BCA-A</span>
         <svg class="dept-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
       <div class="dept-menu" id="deptMenu">
         <div class="dept-option active" data-dept="0" onclick="selectDept(0)">
-          <div class="dept-dot" style="background:#0a5c44"></div>I BCA - A
+          <div class="dept-dot" style="background:#0a5c44"></div>I BCA-A
         </div>
         <div class="dept-option" data-dept="1" onclick="selectDept(1)">
-          <div class="dept-dot" style="background:#0f6b7a"></div>I BCA - B
+          <div class="dept-dot" style="background:#0f6b7a"></div>I BCA-B
         </div>
         <div class="dept-option" data-dept="2" onclick="selectDept(2)">
           <div class="dept-dot" style="background:#5c2d6b"></div>II BCA
@@ -555,19 +555,45 @@ td { padding: 8px 10px; color: var(--ink); vertical-align: middle; line-height: 
 </div>
 
 <div class="footer">
-  KAMARAJ College; <span>HackerRank Challenge Report</span> &nbsp;·&nbsp; Academic Year 2024–25
+  KAMARAJ College of Engineering &amp; Technology &nbsp;·&nbsp; <span>HackerRank Challenge Report</span> &nbsp;·&nbsp; Academic Year 2024–25
 </div>
 </div>
 
 <script>
 /* ══════════════════════════════════════════════════════
-   GOOGLE SHEETS CONFIGURATION
+   GOOGLE SHEETS CONFIGURATION FOR KAMARAJ COLLEGE - BCA
    ══════════════════════════════════════════════════════ */
+
 const SHEET_CONFIG = {
-  0: { id: '1da3Q9GUCBCoEkdLR50Tkm3SfTPInQECASdEsLEsmT4I', name: 'I BCA - A', short: 'BCA-A', color: '#0a5c44', gid: '0' },
-  1: { id: '1Q40Xa1-FMo2UkRNez3LV37evylW4x0q5rawIWc27l1M', name: 'I BCA - B', short: 'BCA-B', color: '#0f6b7a', gid: '0' },
-  2: { id: '1dwYAAfo_C4w-ywolyxoGAkNrbWaO5or349H0miAuuLM', name: 'II BCA',    short: 'BCA-II', color: '#5c2d6b', gid: '0' }
+  0: { 
+    id: '1da3Q9GUCBCoEkdLR50Tkm3SfTPInQECASdEsLEsmT4I',
+    name: 'I BCA-A', 
+    short: 'BCA-A', 
+    color: '#0a5c44', 
+    gid: '0' 
+  },
+  1: { 
+    id: '1gbbm-qPfRyTVIBzIIW9IAg12T5dbQvQSppDVJ7muvkQ',
+    name: 'I BCA-B', 
+    short: 'BCA-B', 
+    color: '#0f6b7a', 
+    gid: '0' 
+  },
+  2: { 
+    id: '1dwYAAfo_C4w-ywolyxoGAkNrbWaO5or349H0miAuuLM',
+    name: 'II BCA', 
+    short: 'BCA II', 
+    color: '#5c2d6b', 
+    gid: '0' 
+  }
 };
+
+const KNOWN_TOPICS = [
+  'Input & Output','Operators','Decision Making','Looping','Series',
+  'Pattern','Arrays 1D','Arrays 2D','Strings','Function',
+  'Recursion','Class & Objects','Encapsulation','Inheritance',
+  'Polymorphism','Abstraction','Interface / Exc. Handling'
+];
 
 const topicColors = [
   '#0a5c44','#0f6b7a','#5c2d6b','#b8860b','#9b2d1f',
@@ -578,20 +604,16 @@ const topicColors = [
 const dataCache = {};
 let currentDeptIdx = 0;
 
-/* ── FIX: No timestamp param — use cache-busting via headers instead ── */
 function buildCSVUrl(sheetId, gid) {
-  return 'https://docs.google.com/spreadsheets/d/' + sheetId + '/export?format=csv&gid=' + gid;
+  return 'https://docs.google.com/spreadsheets/d/' + sheetId + '/export?format=csv&gid=' + gid + '&t=' + Date.now();
 }
 
 async function fetchSheetData(deptIdx) {
   const cfg = SHEET_CONFIG[deptIdx];
   const url = buildCSVUrl(cfg.id, cfg.gid);
   try {
-    const resp = await fetch(url, {
-      cache: 'no-store',
-      headers: { 'Cache-Control': 'no-cache' }
-    });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const resp = await fetch(url, { cache: 'no-store' });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status + ' — sheet may not be public');
     const csv = await resp.text();
     return parseCSV(csv, deptIdx);
   } catch (err) {
@@ -713,7 +735,7 @@ document.addEventListener('click', function(e) {
 function selectDept(idx) {
   document.querySelectorAll('.dept-option').forEach(function(el){ el.classList.remove('active'); });
   document.querySelector('.dept-option[data-dept="'+idx+'"]').classList.add('active');
-  const labels = ['I BCA - A', 'I BCA - B', 'II BCA'];
+  const labels = ['I BCA-A', 'I BCA-B', 'II BCA'];
   document.getElementById('deptBtnLabel').innerHTML = labels[idx];
   document.getElementById('deptBtn').classList.remove('open');
   document.getElementById('deptMenu').classList.remove('open');
@@ -768,7 +790,7 @@ async function loadAndRenderDept(deptIdx, isInitial) {
       if (isInitial) { overlay.classList.add('hidden'); setTimeout(() => { overlay.style.display = 'none'; }, 500); }
       document.getElementById('errorMsg').textContent = err.message;
       errBanner.classList.add('show');
-      document.getElementById('last-updated-txt').textContent = 'Failed to load — check sheet permissions';
+      document.getElementById('last-updated-txt').textContent = 'Failed to load — using cached or empty data';
       return;
     }
   }
@@ -845,6 +867,8 @@ function renderDept(RAW, TOPICS, deptIdx) {
   var chartLabels = top10.map(function(s){ return shortName(s); });
   var chartTotals = top10.map(function(s){ return +s.total.toFixed(2); });
 
+  var yMax = undefined;  // Auto-scaling for all departments
+
   var ctx = document.getElementById('top10Chart');
   if (window._top10Chart) { window._top10Chart.destroy(); }
   Chart.register(ChartDataLabels);
@@ -897,6 +921,7 @@ function renderDept(RAW, TOPICS, deptIdx) {
         },
         yScore: {
           type:'linear', position:'left',
+          max: yMax,
           grid:{color:'rgba(200,185,155,0.18)',lineWidth:0.8},
           ticks:{color:'#0a5c44',font:{family:"'Fira Code',monospace",size:10}},
           border:{color:'rgba(200,185,155,0.35)'},
@@ -998,7 +1023,7 @@ function downloadPage(){
   var a    = document.createElement('a');
   a.href   = URL.createObjectURL(blob);
   var dept = document.getElementById('deptBtnLabel').textContent.trim().replace(/\s+/g,'_');
-  a.download = 'HackerRank_Dashboard_Kamaraj_' + dept + '.html';
+  a.download = 'HackerRank_Dashboard_KAMARAJ_BCA_' + dept + '.html';
   a.click();
   URL.revokeObjectURL(a.href);
 }
